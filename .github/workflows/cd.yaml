@@ -47,4 +47,4 @@ jobs:
                         --name ${{ secrets.AZURE_CONTAINER_APP_NAME }} \
                         --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
                         --image ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/bugstore-api:${{ github.sha }} \
-                        --set-env-vars "ConnectionStrings__PostgreSql=${{ secrets.DATABASE_URL }}"
+                        --set-env-vars "ConnectionStrings__PostgreSql=${{ secrets.DATABASE_URL }}" "ConnectionStrings__Redis=${{ secrets.REDIS_URL }}" "Cache__Enabled=true"
