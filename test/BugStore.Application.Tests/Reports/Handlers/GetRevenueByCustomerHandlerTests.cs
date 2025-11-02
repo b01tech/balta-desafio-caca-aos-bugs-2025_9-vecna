@@ -1,6 +1,7 @@
 using BugStore.Application.Reports.DTOs;
 using BugStore.Application.Reports.Handlers;
 using BugStore.Application.Reports.Queries;
+using BugStore.Application.Services.Cache;
 using BugStore.Domain.Interfaces;
 using BugStore.Exception.ProjectException;
 using BugStore.TestUtilities.Builders;
@@ -12,13 +13,19 @@ public class GetRevenueByCustomerHandlerTests
 {
     private readonly Mock<IOrderReadOnlyRepository> _orderRepositoryMock;
     private readonly Mock<ICustomerReadOnlyRepository> _customerRepositoryMock;
+    private readonly Mock<ICacheService> _cacheServiceMock;
     private readonly GetRevenueByCustomerHandler _handler;
 
     public GetRevenueByCustomerHandlerTests()
     {
         _orderRepositoryMock = new Mock<IOrderReadOnlyRepository>();
         _customerRepositoryMock = new Mock<ICustomerReadOnlyRepository>();
-        _handler = new GetRevenueByCustomerHandler(_orderRepositoryMock.Object, _customerRepositoryMock.Object);
+        _cacheServiceMock = new Mock<ICacheService>();
+        _handler = new GetRevenueByCustomerHandler(
+            _orderRepositoryMock.Object,
+            _customerRepositoryMock.Object,
+            _cacheServiceMock.Object
+        );
     }
 
     [Fact]
@@ -33,9 +40,7 @@ public class GetRevenueByCustomerHandlerTests
         var request = new RequestRevenueByCustomerDTO(customerId);
         var query = new GetRevenueByCustomerQuery(request);
 
-        _customerRepositoryMock
-            .Setup(x => x.GetByIdAsync(customerId))
-            .ReturnsAsync(customer);
+        _customerRepositoryMock.Setup(x => x.GetByIdAsync(customerId)).ReturnsAsync(customer);
 
         _orderRepositoryMock
             .Setup(x => x.GetTotalByCustomerIdAsync(customerId))
@@ -68,7 +73,6 @@ public class GetRevenueByCustomerHandlerTests
         var exception = await Assert.ThrowsAsync<NotFoundException>(
             () => _handler.Handle(query, CancellationToken.None).AsTask()
         );
-
     }
 
     [Fact]
@@ -83,9 +87,7 @@ public class GetRevenueByCustomerHandlerTests
         var request = new RequestRevenueByCustomerDTO(customerId);
         var query = new GetRevenueByCustomerQuery(request);
 
-        _customerRepositoryMock
-            .Setup(x => x.GetByIdAsync(customerId))
-            .ReturnsAsync(customer);
+        _customerRepositoryMock.Setup(x => x.GetByIdAsync(customerId)).ReturnsAsync(customer);
 
         _orderRepositoryMock
             .Setup(x => x.GetTotalByCustomerIdAsync(customerId))
@@ -111,9 +113,7 @@ public class GetRevenueByCustomerHandlerTests
         var request = new RequestRevenueByCustomerDTO(customerId);
         var query = new GetRevenueByCustomerQuery(request);
 
-        _customerRepositoryMock
-            .Setup(x => x.GetByIdAsync(customerId))
-            .ReturnsAsync(customer);
+        _customerRepositoryMock.Setup(x => x.GetByIdAsync(customerId)).ReturnsAsync(customer);
 
         _orderRepositoryMock
             .Setup(x => x.GetTotalByCustomerIdAsync(customerId))
