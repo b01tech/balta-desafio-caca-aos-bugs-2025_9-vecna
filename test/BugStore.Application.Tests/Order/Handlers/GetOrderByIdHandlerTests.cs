@@ -1,5 +1,6 @@
 using BugStore.Application.Order.Handlers;
 using BugStore.Application.Order.Queries;
+using BugStore.Application.Services.Cache;
 using BugStore.Domain.Interfaces;
 using BugStore.Exception.ProjectException;
 using BugStore.TestUtilities.Builders;
@@ -10,12 +11,22 @@ namespace BugStore.Application.Tests.Order.Handlers;
 public class GetOrderByIdHandlerTests
 {
     private readonly Mock<IOrderReadOnlyRepository> _readRepositoryMock;
+    private readonly Mock<ICacheService> _cacheServiceMock;
     private readonly GetOrderByIdHandler _handler;
 
     public GetOrderByIdHandlerTests()
     {
         _readRepositoryMock = new Mock<IOrderReadOnlyRepository>();
-        _handler = new GetOrderByIdHandler(_readRepositoryMock.Object);
+        _cacheServiceMock = new Mock<ICacheService>();
+        _cacheServiceMock
+            .Setup(x =>
+                x.GetAsync<BugStore.Application.Order.DTOs.ResponseOrderDetailedDTO>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync((BugStore.Application.Order.DTOs.ResponseOrderDetailedDTO?)null);
+        _handler = new GetOrderByIdHandler(_readRepositoryMock.Object, _cacheServiceMock.Object);
     }
 
     [Fact]

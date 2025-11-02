@@ -1,6 +1,7 @@
 using BugStore.Application.Extensions;
 using BugStore.Application.Order.DTOs;
 using BugStore.Application.Order.Queries;
+using BugStore.Application.Services.Cache;
 using BugStore.Domain.Interfaces;
 using Mediator;
 
@@ -10,10 +11,12 @@ namespace BugStore.Application.Order.Handlers
         : IRequestHandler<GetOrderByCustomerIdQuery, ResponseListOrderDTO>
     {
         private readonly IOrderReadOnlyRepository _orderReadOnlyRepository;
-
-        public GetOrderByCustomerIdHandler(IOrderReadOnlyRepository orderReadOnlyRepository)
+        private readonly ICacheService _cacheService;
+        private readonly string _cacheKeyPrefix = "orders_by_customer_";
+        public GetOrderByCustomerIdHandler(IOrderReadOnlyRepository orderReadOnlyRepository, ICacheService cacheService)
         {
             _orderReadOnlyRepository = orderReadOnlyRepository;
+            _cacheService = cacheService;
         }
 
         public async ValueTask<ResponseListOrderDTO> Handle(
@@ -21,6 +24,17 @@ namespace BugStore.Application.Order.Handlers
             CancellationToken cancellationToken
         )
         {
+            var cacheKey = $"{_cacheKeyPrefix}{request.CustomerId}_page_{request.Page}_size_{request.PageSize}";
+
+            var cachedResult = await _cacheService.GetAsync<ResponseListOrderDTO>(
+                cacheKey,
+                cancellationToken
+            );
+            if (cachedResult != null)
+            {
+                return cachedResult;
+            }
+
             var orders = await _orderReadOnlyRepository.GetByCustomerIdAsync(
                 request.CustomerId,
                 request.Page,
@@ -34,7 +48,9 @@ namespace BugStore.Application.Order.Handlers
                 .Select(o => new ResponseOrderSummaryDTO(o.Id, o.CustomerId, o.CreatedAt, o.Total))
                 .ToList();
 
-            return new ResponseListOrderDTO(totalItems, request.Page, totalPages, orderSummaries);
+            var result = new ResponseListOrderDTO(totalItems, request.Page, totalPages, orderSummaries);
+            await _cacheService.SetAsync(cacheKey, result, cancellationToken);
+            return result;
         }
     }
 }
