@@ -1,6 +1,7 @@
 using BugStore.Application.Reports.DTOs;
 using BugStore.Application.Reports.Handlers;
 using BugStore.Application.Reports.Queries;
+using BugStore.Application.Services.Cache;
 using BugStore.Domain.Interfaces;
 using Moq;
 
@@ -9,12 +10,14 @@ namespace BugStore.Application.Tests.Reports.Handlers;
 public class GetRevenueByPeriodHandlerTests
 {
     private readonly Mock<IOrderReadOnlyRepository> _repositoryMock;
+    private readonly Mock<ICacheService> _cacheServiceMock;
     private readonly GetRevenueByPeriodHandler _handler;
 
     public GetRevenueByPeriodHandlerTests()
     {
         _repositoryMock = new Mock<IOrderReadOnlyRepository>();
-        _handler = new GetRevenueByPeriodHandler(_repositoryMock.Object);
+        _cacheServiceMock = new Mock<ICacheService>();
+        _handler = new GetRevenueByPeriodHandler(_repositoryMock.Object, _cacheServiceMock.Object);
     }
 
     [Fact]
