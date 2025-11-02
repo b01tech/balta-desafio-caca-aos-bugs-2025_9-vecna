@@ -1,6 +1,8 @@
+using BugStore.Application.Services.Cache;
 using BugStore.Domain.Interfaces;
 using BugStore.Infra.Data;
 using BugStore.Infra.Repositories;
+using BugStore.Infra.Services.Cache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,7 @@ namespace BugStore.Infra.Extensions
         {
             AddDataBaseContext(services, configuration);
             AddRepositories(services);
+            AddCacheServices(services, configuration);
             return services;
         }
 
@@ -38,6 +41,29 @@ namespace BugStore.Infra.Extensions
             services.AddScoped<IOrderReadOnlyRepository, OrderReadOnlyRepository>();
             services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
+        private static void AddCacheServices(
+            IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            var redisConnectionString = configuration.GetConnectionString("Redis");
+
+            if (!string.IsNullOrEmpty(redisConnectionString))
+            {
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = redisConnectionString;
+                });
+
+                services.AddScoped<ICacheService, RedisCacheService>();
+            }
+            else
+            {
+                services.AddDistributedMemoryCache();
+                services.AddScoped<ICacheService, RedisCacheService>();
+            }
         }
     }
 }
