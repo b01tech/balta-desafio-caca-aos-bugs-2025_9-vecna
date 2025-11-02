@@ -57,7 +57,7 @@ public class RedisCacheService : ICacheService
             var serializedValue = JsonSerializer.Serialize(value, _jsonOptions);
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1)
             };
 
             await _distributedCache.SetStringAsync(
