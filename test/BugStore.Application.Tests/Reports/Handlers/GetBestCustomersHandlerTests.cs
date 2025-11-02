@@ -1,6 +1,7 @@
 using BugStore.Application.Reports.DTOs;
 using BugStore.Application.Reports.Handlers;
 using BugStore.Application.Reports.Queries;
+using BugStore.Application.Services.Cache;
 using BugStore.Domain.Interfaces;
 using Moq;
 
@@ -9,12 +10,14 @@ namespace BugStore.Application.Tests.Reports.Handlers;
 public class GetBestCustomersHandlerTests
 {
     private readonly Mock<IOrderReadOnlyRepository> _repositoryMock;
+    private readonly Mock<ICacheService> _cacheServiceMock;
     private readonly GetBestCustomersHandler _handler;
 
     public GetBestCustomersHandlerTests()
     {
         _repositoryMock = new Mock<IOrderReadOnlyRepository>();
-        _handler = new GetBestCustomersHandler(_repositoryMock.Object);
+        _cacheServiceMock = new Mock<ICacheService>();
+        _handler = new GetBestCustomersHandler(_repositoryMock.Object, _cacheServiceMock.Object);
     }
 
     [Fact]
@@ -25,7 +28,12 @@ public class GetBestCustomersHandlerTests
         var request = new RequestBestCustomerDTO(topCustomers);
         var query = new GetBestCustomersQuery(request);
 
-        var expectedCustomers = new List<(Guid CustomerId, string CustomerName, long TotalOrders, decimal TotalSpent)>
+        var expectedCustomers = new List<(
+            Guid CustomerId,
+            string CustomerName,
+            long TotalOrders,
+            decimal TotalSpent
+        )>
         {
             (Guid.CreateVersion7(), "João Silva", 15L, 2500.00m),
             (Guid.CreateVersion7(), "Maria Santos", 12L, 2200.50m),
@@ -43,7 +51,7 @@ public class GetBestCustomersHandlerTests
         Assert.NotNull(result);
         Assert.NotNull(result.Customers);
         Assert.Equal(3, result.Customers.Count);
-        
+
         var firstCustomer = result.Customers.First();
         Assert.Equal(expectedCustomers[0].CustomerId, firstCustomer.CustomerId);
         Assert.Equal(expectedCustomers[0].CustomerName, firstCustomer.CustomerName);
@@ -59,7 +67,13 @@ public class GetBestCustomersHandlerTests
         var request = new RequestBestCustomerDTO(topCustomers);
         var query = new GetBestCustomersQuery(request);
 
-        var expectedCustomers = new List<(Guid CustomerId, string CustomerName, long TotalOrders, decimal TotalSpent)>();
+        var expectedCustomers =
+            new List<(
+                Guid CustomerId,
+                string CustomerName,
+                long TotalOrders,
+                decimal TotalSpent
+            )>();
 
         _repositoryMock
             .Setup(x => x.GetBestCustomersAsync(topCustomers))
