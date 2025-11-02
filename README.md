@@ -1,33 +1,26 @@
-![github-repository-share_shadow-monster](https://github.com/user-attachments/assets/fc0d4703-c9b5-4320-969f-c234c9d4b979)
+![github-repository-share_vecna](https://github.com/user-attachments/assets/57ed9773-f471-4984-b709-1d4d49975c27)
 
-## 👻 Caça aos Bugs 2025 - Desafio 08 - Shadow Monster
+## 👻 Caça aos Bugs 2025 - Desafio 09 - Vecna
 
-Oi, eu sou o Bruno e este é o espaço onde compartilho minha jornada de aprendizado durante o desafio **Caça aos Bugs 2025**, realizado pelo [balta.io](https://balta.io). 👻
+Oi, eu sou o [seu nome aqui] e este é o espaço onde compartilho minha jornada de aprendizado durante o desafio **Caça aos Bugs 2025**, realizado pelo [balta.io](https://balta.io). 👻
 
 Aqui você vai encontrar projetos, exercícios e códigos que estou desenvolvendo durante o desafio. O objetivo é colocar a mão na massa, testar ideias e registrar minha evolução no mundo da tecnologia.
 
 ### Sobre este desafio
 
-No desafio **Shadow Monster** eu tive que fazer a publicação da aplicação utilizando o processo de CI/CD com GitHub Actions.
+No desafio **Vecna** eu tive que otimizar a performance da aplicação.
 Neste processo eu aprendi:
 
--   ✅ Git e GitHub
--   ✅ CI/CD
--   ✅ Build e Test
--   ✅ GitHub Actions
--   ✅ Microsoft Azure
+-   ✅ Boas Práticas
+-   ✅ Cache
+-   ✅ Performance
 
 ## REGRAS DO DESAFIO
 
--   [x] Realizar um fork do repositório do desafio
--   [x] Criar um Workflow para branch main
--   [x] Executar o build do projeto no Workflow
--   [x] Executar o teste (Unit Test) do projeto no Workflow
--   [x] Realizar o deployment automatizado da aplicação via CI/CD
-
----
-
-# ✅ DESAFIO CONCLUÍDO
+-   [ ] Realizar um fork do repositório do desafio
+-   [ ] [Fazer o download do banco de testes](https://baltaio.blob.core.windows.net/temp/desafio-caca-aos-bugs-2025/database.zip)
+-   [ ] Otimizar os métodos (Principalmente os de leitura)
+-   [ ] Obter uma resposta de leitura em menos de 200ms
 
 ### 🚀 Deploy
 
